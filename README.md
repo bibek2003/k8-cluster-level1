@@ -46,16 +46,9 @@ a) Cluster created on GCP on 3 Ubuntu instanes first manually and then recreated
 
            Note: the above command is single line without any break
            
-         - Test the cluster using the command
+         - Test the cluster using the command "kubectl get nodes -o wide"
          
-            root@k8-vm1-8234d4ed3aaabbe4:~/kubernetes-cluster-setup/k8-cluster-level1# kubectl get nodes -o wide
-NAME                      STATUS   ROLES    AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION    CONTAINER-RUNTIME
-k8-vm1-8234d4ed3aaabbe4   Ready    master   3h28m   v1.12.7   10.128.0.11   <none>        Ubuntu 18.04.2 LTS   4.15.0-1036-gcp   docker://18.6.1
-k8-vm2-8234d4ed3aaabbe4   Ready    <none>   3h24m   v1.12.7   10.128.0.13   <none>        Ubuntu 18.04.2 LTS   4.15.0-1036-gcp   docker://18.6.1
-k8-vm3-8234d4ed3aaabbe4   Ready    <none>   3h23m   v1.12.7   10.128.0.12   <none>        Ubuntu 18.04.2 LTS   4.15.0-1036-gcp   docker://18.6.1
-root@k8-vm1-8234d4ed3aaabbe4:~/kubernetes-cluster-setup/k8-cluster-level1#
-
-
+            
 2:	Install nginx ingress controller on the cluster
 ----------------------------------------------------
 
@@ -85,28 +78,11 @@ Tasks 3 and 4: Create namespaces and Deploy "Guest-book" application on the clus
                 - Deploy frontend Deployment and service on both the namespaces
              
             - Test the deployment and services using the following command
+            kubectl get deploy -n staging
+            kubectl get deploy -n production
+            kubectl get service -n staging
+            kubectl get service -n production
             
-root@k8-vm1-8234d4ed3aaabbe4:~/kubernetes-cluster-setup/k8-cluster-level1# kubectl get deploy -n staging
-NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-frontend       1         1         1            1           3h8m
-redis-master   1         1         1            1           3h8m
-redis-slave    2         2         2            2           3h8m
-root@k8-vm1-8234d4ed3aaabbe4:~/kubernetes-cluster-setup/k8-cluster-level1# kubectl get deploy -n production
-NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-frontend       1         1         1            1           3h9m
-redis-master   1         1         1            1           3h9m
-redis-slave    2         2         2            2           3h9m
-root@k8-vm1-8234d4ed3aaabbe4:~/kubernetes-cluster-setup/k8-cluster-level1# kubectl get service -n staging
-NAME           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
-frontend       NodePort    10.104.116.82    <none>        80:32641/TCP   3h9m
-redis-master   ClusterIP   10.108.109.192   <none>        6379/TCP       3h9m
-redis-slave    ClusterIP   10.108.39.213    <none>        6379/TCP       3h9m
-root@k8-vm1-8234d4ed3aaabbe4:~/kubernetes-cluster-setup/k8-cluster-level1# kubectl get service -n production
-NAME           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
-frontend       NodePort    10.101.140.43    <none>        80:30530/TCP   3h9m
-redis-master   ClusterIP   10.106.112.206   <none>        6379/TCP       3h9m
-redis-slave    ClusterIP   10.103.197.137   <none>        6379/TCP       3h9m
-root@k8-vm1-8234d4ed3aaabbe4:~/kubernetes-cluster-setup/k8-cluster-level1#
 
 Task 5 and 6: Expose staging and production application
 -------------------------------------------------------
@@ -143,38 +119,10 @@ Task 8: Simulate Horizontal autoscaling for both namespaces
           
           Note: This will generate load on the server using the command "siege" scale up frondend pods which CPU utilization exceeds 20%                  and scale down when cpu utilization goes below 20%
           
-          Example:
           
-Every 2.0s: kubectl get all -n staging                                                                                                      k8-vm1-8234d4ed3aaabbe4: Mon Jul 22 22:20:10 2019
-
-NAME                                READY   STATUS    RESTARTS   AGE
-pod/frontend-654c699bc8-9n8hh       1/1     Running   0          15s
-pod/frontend-654c699bc8-ndlhb       1/1     Running   0          15s
-pod/frontend-654c699bc8-wmtzd       1/1     Running   0          3h33m
-pod/redis-master-57fc67768d-wwcw7   1/1     Running   0          3h33m
-pod/redis-slave-57f9f8db74-8hfkx    1/1     Running   0          3h33m
-pod/redis-slave-57f9f8db74-9nrrf    1/1     Running   0          3h33m
-
-NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
-service/frontend       NodePort    10.104.116.82    <none>        80:32641/TCP   3h33m
-service/redis-master   ClusterIP   10.108.109.192   <none>        6379/TCP       3h33m
-service/redis-slave    ClusterIP   10.108.39.213    <none>        6379/TCP       3h33m
-
-NAME                           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/frontend       3         3         3            3           3h33m
-deployment.apps/redis-master   1         1         1            1           3h33m
-deployment.apps/redis-slave    2         2         2            2           3h33m
-
-NAME                                      DESIRED   CURRENT   READY   AGE
-replicaset.apps/frontend-654c699bc8       3         3         3       3h33m
-replicaset.apps/redis-master-57fc67768d   1         1         1       3h33m
-replicaset.apps/redis-slave-57f9f8db74    2         2         2       3h33m
-
-NAME                                           REFERENCE             TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-horizontalpodautoscaler.autoscaling/frontend   Deployment/frontend   44%/20%   1         5         3          145m
-
           
 Task 9: Steps 2 to 9 could be clubbed into a single wrapper script that will perform the tasks at a single go however due to lack of time could not complete it.
+
 
 In the context of above test, please explain the following:
 •	What was the node size chosen for the Kubernetes nodes? And why?
