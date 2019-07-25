@@ -77,7 +77,7 @@ Tasks 3 and 4: Create namespaces and Deploy "Guest-book" application on the clus
                 - Deploy redis slave deployement and service on both ghe namespaces
                 - Deploy frontend Deployment and service on both the namespaces
              
-            - Test the deployment and services using the following command
+            - Check the deployment and services using the following command
             kubectl get deploy -n staging
             kubectl get deploy -n production
             kubectl get service -n staging
@@ -117,7 +117,7 @@ Task 8: Simulate Horizontal autoscaling for both namespaces
           ./simulate-pod-autoscale-production.sh
           ./simulate-pod-autoscale-staging.sh
           
-          Note: This will generate load on the server using the command "siege" scale up frondend pods which CPU utilization exceeds 20%                  and scale down when cpu utilization goes below 20%
+          Note: This will generate load on the server using the command "siege" and scale up frondend pods when CPU utilization exceeds 20%                  and scale down when cpu utilization goes below 20%
           
           
           
